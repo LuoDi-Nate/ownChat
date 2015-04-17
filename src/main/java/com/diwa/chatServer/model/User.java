@@ -60,4 +60,16 @@ public class User {
     public void setLastOnlineTime(Timestamp lastOnlineTime) {
         this.lastOnlineTime = lastOnlineTime;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nickName='" + nickName + '\'' +
+                ", ip='" + ip + '\'' +
+                ", port=" + port +
+                ", createTime=" + createTime +
+                ", lastOnlineTime=" + lastOnlineTime +
+                '}';
+    }
 }
