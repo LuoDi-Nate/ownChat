@@ -1,4 +1,4 @@
-package com.diwa;
+package com.diwa.serverTest;
 
 import com.diwa.chatServer.model.User;
 import junit.framework.TestCase;
@@ -13,9 +13,9 @@ import java.io.Reader;
 /**
  * Testing {@link com.diwa.ExampleMacro}
  */
-public class TestExampleServlet extends TestCase
+public class TestChatServerDao extends TestCase
 {
-    public void testBasic()
+    public void testSelectUserById()
     {
         // add test here...
         try {
@@ -30,5 +30,27 @@ public class TestExampleServlet extends TestCase
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void testCreateUserByUser(){
+        User user = new User();
+        user.setNickName("fortest7");
+        user.setIp("127.0.0.1");
+        user.setPort(9902);
+
+        try{
+            Reader resourceAsReader = Resources.getResourceAsReader("configuration.xml");
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsReader);
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+
+            int id = sqlSession.insert("INSERT-USER-BY-USER", user);
+
+            sqlSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
     }
 }

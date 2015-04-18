@@ -1,6 +1,7 @@
 package com.diwa.chatServer.model;
 
 import java.security.Timestamp;
+import java.util.Date;
 
 /**
  * Created by di on 18/4/15.
@@ -10,8 +11,26 @@ public class User {
     private String nickName;
     private String ip;
     private int port;
-    private Timestamp createTime;
-    private Timestamp lastOnlineTime;
+    private Date createTime;
+    private String password;
+
+    public Date getLastOnlineTime() {
+        return lastOnlineTime;
+    }
+
+    public void setLastOnlineTime(Date lastOnlineTime) {
+        this.lastOnlineTime = lastOnlineTime;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    private Date lastOnlineTime;
 
     public int getId() {
         return id;
@@ -45,21 +64,6 @@ public class User {
         this.port = port;
     }
 
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public Timestamp getLastOnlineTime() {
-        return lastOnlineTime;
-    }
-
-    public void setLastOnlineTime(Timestamp lastOnlineTime) {
-        this.lastOnlineTime = lastOnlineTime;
-    }
 
     @Override
     public String toString() {

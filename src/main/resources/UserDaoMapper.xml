@@ -7,12 +7,25 @@
 <mapper namespace="UserDaoMapper">
 
     <select id="SELECT-USER-BY-ID" parameterType="int"
-
             resultType="com.diwa.chatServer.model.User">
 
+    <![CDATA[
         select * from user where id =#{userId}
+    ]]>
 
     </select>
+
+    <insert id="INSERT-USER-BY-USER" parameterType="com.diwa.chatServer.model.User">
+        <![CDATA[
+        insert into user (nickName, ip, port, password)
+          VALUES (#{nickName}, #{ip}, #{port})
+        ]]>
+
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            select @@IDENTITY
+        </selectKey>
+
+    </insert>
 
 </mapper>
 

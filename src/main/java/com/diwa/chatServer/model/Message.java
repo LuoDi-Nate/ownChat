@@ -11,7 +11,16 @@ public class Message {
     private int toId;
     private String context;
     private Timestamp createTime;
+    private boolean beenRead;
 
+
+    public boolean isBeenRead() {
+        return beenRead;
+    }
+
+    public void setBeenRead(boolean beenRead) {
+        this.beenRead = beenRead;
+    }
     public int getId() {
         return id;
     }
