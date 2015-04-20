@@ -1,6 +1,7 @@
 package com.diwa.chatServer.dao;
 
 import com.diwa.chatServer.model.User;
+import com.diwa.common.exceptions.DbException;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -12,8 +13,8 @@ import java.io.Reader;
 /**
  * Created by di on 18/4/15.
  */
-public class UserDao {
-    static{
+public class UserDao{
+    static {
         Reader resourceAsReader = null;
         try {
             resourceAsReader = Resources.getResourceAsReader("configuration.xml");
