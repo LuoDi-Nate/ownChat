@@ -21,8 +21,8 @@
     </environments>
 
     <mappers>
-        <!--userMapper.xml装载进来  同等于把“dao”的实现装载进来 -->
-        <!--<mapper resource="myBatis/userMapper.xml" />-->
-        <mapper resource="UserDaoMapper.xml" />
-    </mappers>
+    <!--userMapper.xml装载进来  同等于把“dao”的实现装载进来 -->
+    <!--<mapper resource="myBatis/userMapper.xml" />-->
+    <mapper resource="UserDaoMapper.xml" />
+</mappers>
 </configuration>
