@@ -1,4 +1,4 @@
-package com.diwa.chatServer.service;
+package com.diwa.serverTest;
 
 import com.diwa.chatServer.model.User;
 import org.codehaus.jackson.map.ObjectMapper;

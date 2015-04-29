@@ -6,29 +6,11 @@ import java.util.Date;
 /**
  * Created by di on 18/4/15.
  */
-public class Message {
-    private int id;
+public class MessageJob extends Job {
     private int fromId;
     private int toId;
     private String context;
     private Date createTime;
-    private boolean beenRead;
-
-
-    public boolean isBeenRead() {
-        return beenRead;
-    }
-
-    public void setBeenRead(boolean beenRead) {
-        this.beenRead = beenRead;
-    }
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getFromId() {
         return fromId;

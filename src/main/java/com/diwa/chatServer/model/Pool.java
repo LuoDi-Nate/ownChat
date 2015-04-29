@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Pool {
     static Integer count;
-    static List jobList;
+    static List<> jobList;
 
     public static int getCount() {
         if(count == null){
