@@ -1,9 +1,11 @@
 package com.diwa.chatServer.serverMain;
 
 import com.diwa.chatServer.model.Pool;
+import com.diwa.chatServer.service.EntityHandler;
 import com.diwa.chatServer.view.ServerView;
 import com.diwa.common.dto.MessageDto;
 import com.diwa.common.exceptions.runServerException;
+import com.diwa.common.job.Job;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.net.DatagramPacket;
@@ -16,6 +18,8 @@ public class ChatServer {
     public static void main(String[] args) throws Exception {
         //打开jackson
         ObjectMapper entityReader = new ObjectMapper();
+        //准备好entityHandler
+        EntityHandler entityHandler = new EntityHandler();
 
         ServerView sv = new ServerView(9999);
         sv.setVisible(true);
@@ -43,7 +47,8 @@ public class ChatServer {
             //反序列化MessageDto
             MessageDto entity = entityReader.readValue(jobStr, MessageDto.class);
             //生产好,等待消费
-            Pool.getJobList().add(entity);
+            Job job = entityHandler.dealWithEntity(entity);
+            Pool.getJobList().add(job);
         }
     }
 }

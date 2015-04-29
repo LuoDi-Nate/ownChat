@@ -1,6 +1,5 @@
-package com.diwa.chatServer.model;
+package com.diwa.common.job;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**

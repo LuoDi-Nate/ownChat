@@ -1,4 +1,4 @@
-package com.diwa.chatServer.model;
+package com.diwa.common.job;
 
 /**
  * Created by di on 29/4/15.

@@ -1,5 +1,7 @@
 package com.diwa.chatServer.model;
 
+import com.diwa.common.job.Job;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public class Pool {
     static Integer count;
-    static List<> jobList;
+    static List<Job> jobList;
 
     public static int getCount() {
         if(count == null){
@@ -24,9 +26,9 @@ public class Pool {
         Pool.count = count;
     }
 
-    public static List getJobList() {
+    public static List<Job> getJobList() {
         if (jobList == null) {
-            jobList = new ArrayList();
+            jobList = new ArrayList<Job>();
             return jobList;
         }
         return jobList;

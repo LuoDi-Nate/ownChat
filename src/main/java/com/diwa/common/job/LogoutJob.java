@@ -1,4 +1,4 @@
-package com.diwa.chatServer.model;
+package com.diwa.common.job;
 
 import java.util.Date;
 
