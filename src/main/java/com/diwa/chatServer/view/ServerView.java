@@ -15,8 +15,25 @@ public class ServerView extends JFrame {
     private Color Color = java.awt.Color.red;
     private String consoleStr = "CONSOLE:\n";
     private String eventStr = "EVENT:\n";
-    private int port = 9999;
 
+    public int getStates() {
+        return states;
+    }
+
+    public void setStates(int states) {
+        this.states = states;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    private int port = 9999;
+    private int states = 0;//0关闭 1 开启
 
     //整体构架
     private Container cc;
@@ -112,7 +129,8 @@ public class ServerView extends JFrame {
         //start键添加动作
         startBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                states = 1;
+                flashServerView(0, "trying to start server...", "");
             }
         });
     }

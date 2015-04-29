@@ -1,6 +1,7 @@
 package com.diwa.chatServer.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by di on 18/4/15.
@@ -10,7 +11,7 @@ public class Message {
     private int fromId;
     private int toId;
     private String context;
-    private Timestamp createTime;
+    private Date createTime;
     private boolean beenRead;
 
 
@@ -53,11 +54,11 @@ public class Message {
         this.context = context;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }
