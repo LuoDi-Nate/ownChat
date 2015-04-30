@@ -38,4 +38,13 @@ public class MessageDto {
     public void setOperatorId(int operatorId) {
         this.operatorId = operatorId;
     }
+
+    @Override
+    public String toString() {
+        return "MessageDto{" +
+                "option=" + option +
+                ", context='" + context + '\'' +
+                ", operatorId=" + operatorId +
+                '}';
+    }
 }

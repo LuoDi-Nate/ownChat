@@ -17,6 +17,7 @@ public class Keeper extends Thread{
             if(Pool.getJobList().size() == 0){
                 try {
                     Thread.sleep(200);
+                    continue;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

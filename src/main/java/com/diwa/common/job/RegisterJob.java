@@ -40,4 +40,11 @@ public class RegisterJob extends Job{
     public void setPassword(String password) {
         this.password = password;
     }
+
+
+    @Override
+    public String toString() {
+        String returnStr = String.format("RegisterJOB, from %s , ", this.getOperatorId());
+        return returnStr;
+    }
 }

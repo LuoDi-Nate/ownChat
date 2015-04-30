@@ -42,4 +42,10 @@ public class MessageJob extends Job {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        String returnStr = String.format("MessageJOB, from %s , ", this.getOperatorId());
+        return returnStr;
+    }
 }

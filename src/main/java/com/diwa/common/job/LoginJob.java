@@ -24,4 +24,9 @@ public class LoginJob extends Job {
     public void setId(int id) {
         this.id = id;
     }
+    @Override
+    public String toString() {
+        String returnStr = String.format("LoginJOB, from %s , ", this.getOperatorId());
+        return returnStr;
+    }
 }

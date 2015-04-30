@@ -24,4 +24,10 @@ public class LogoutJob extends Job {
     public void setTime(Date time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        String returnStr = String.format("LogoutJOB, from %s , ", this.getOperatorId());
+        return returnStr;
+    }
 }

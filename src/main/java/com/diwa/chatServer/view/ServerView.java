@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 /**
  * Created by di on 28/4/15.
@@ -11,10 +12,10 @@ import java.awt.event.ActionListener;
 public class ServerView extends JFrame {
     //param
     //server目前状态
-    private String status = "ON";
+    private String status = "OFF";
     private Color Color = java.awt.Color.red;
-    private String consoleStr = "CONSOLE:\n";
-    private String eventStr = "EVENT:\n";
+    private String consoleStr = "CONSOLE:\n============================";
+    private String eventStr = "EVENT:\n============================";
 
     public int getStates() {
         return states;
@@ -151,28 +152,37 @@ public class ServerView extends JFrame {
                 this.status = "OFF";
                 break;
         }
+        Date nowTime = new Date();
         this.statusBtn.setText(this.status);
         this.statusBtn.setBackground(this.Color);
 
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n"+nowTime.toString()+"\n" + newConsoleStr);
 
         String oldEventStr = eventText.getText();
-        this.eventText.setText(oldEventStr + "\n" + newEventStr);
+        this.eventText.setText(oldEventStr + "\n"+nowTime.toString()+"\n"  + newEventStr);
 
     }
 
     public void flashServerView(String newConsoleStr, String newEventStr) {
+        Date nowTime = new Date();
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n" +nowTime.toString()+"\n" + newConsoleStr);
 
         String oldEventStr = eventText.getText();
-        this.eventText.setText(oldEventStr + "\n" + newEventStr);
+        this.eventText.setText(oldEventStr + "\n" +nowTime.toString()+"\n" + newEventStr);
     }
 
     public void flashServerView(String newConsoleStr) {
+        Date nowTime = new Date();
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n" +nowTime.toString()+"\n" + newConsoleStr);
+    }
+
+    public void flashEventOnly(String newEventStr){
+        String oldEventStr = eventText.getText();
+        Date nowTime = new Date();
+        this.eventText.setText(oldEventStr+"\n"+nowTime.toString()+"\n"+newEventStr);
     }
 
 
