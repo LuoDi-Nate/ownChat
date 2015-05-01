@@ -84,14 +84,18 @@ public class ServerView extends JFrame {
         //mid
         midPanel = new JPanel();
         consoleText = new JTextArea(consoleStr);
+        consoleText.setColumns(30);
         eventText = new JTextArea(eventStr);
         midPanel.setLayout(new GridLayout(1, 2));
         midPanel.add(new JScrollPane(consoleText));
         consoleText.setWrapStyleWord(true);
+        consoleText.setLineWrap(true);
         consoleText.setEnabled(false);
         midPanel.add(new JScrollPane(eventText));
         eventText.setEnabled(false);
         eventText.setWrapStyleWord(true);
+        eventText.setColumns(30);
+        eventText.setLineWrap(true);
 
         //sourth
         sourthPanel = new JPanel();
@@ -157,32 +161,32 @@ public class ServerView extends JFrame {
         this.statusBtn.setBackground(this.Color);
 
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n"+nowTime.toString()+"\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n*"+nowTime.toString()+"\n      " + newConsoleStr);
 
         String oldEventStr = eventText.getText();
-        this.eventText.setText(oldEventStr + "\n"+nowTime.toString()+"\n"  + newEventStr);
+        this.eventText.setText(oldEventStr + "\n*"+nowTime.toString()+"\n      "  + newEventStr);
 
     }
 
     public void flashServerView(String newConsoleStr, String newEventStr) {
         Date nowTime = new Date();
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n" +nowTime.toString()+"\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n*" +nowTime.toString()+"\n      " + newConsoleStr);
 
         String oldEventStr = eventText.getText();
-        this.eventText.setText(oldEventStr + "\n" +nowTime.toString()+"\n" + newEventStr);
+        this.eventText.setText(oldEventStr + "\n*" +nowTime.toString()+"\n      " + newEventStr);
     }
 
     public void flashServerView(String newConsoleStr) {
         Date nowTime = new Date();
         String oldConsole = consoleText.getText();
-        this.consoleText.setText(oldConsole + "\n" +nowTime.toString()+"\n" + newConsoleStr);
+        this.consoleText.setText(oldConsole + "\n*" +nowTime.toString()+"\n      " + newConsoleStr);
     }
 
     public void flashEventOnly(String newEventStr){
         String oldEventStr = eventText.getText();
         Date nowTime = new Date();
-        this.eventText.setText(oldEventStr+"\n"+nowTime.toString()+"\n"+newEventStr);
+        this.eventText.setText(oldEventStr+"\n*"+nowTime.toString()+"\n      "+newEventStr);
     }
 
 

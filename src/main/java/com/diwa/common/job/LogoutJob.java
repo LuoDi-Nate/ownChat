@@ -26,6 +26,15 @@ public class LogoutJob extends Job {
     }
 
     @Override
+    public Thread killJob() {
+        return new Thread(new Runnable() {
+            public void run() {
+
+            }
+        });
+    }
+
+    @Override
     public String toString() {
         String returnStr = String.format("LogoutJOB, from %s , ", this.getOperatorId());
         return returnStr;

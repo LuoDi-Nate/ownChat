@@ -5,8 +5,11 @@ package com.diwa.common.job;
  * 放在pool中的任务
  * 是一个父类
  */
-public class Job {
+public abstract class Job {
     protected int operatorId;
+
+    //生成一个线程 如何消费掉这条信息
+    public abstract Thread killJob();
 
     public int getOperatorId() {
         return operatorId;
@@ -17,7 +20,7 @@ public class Job {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String returnStr = String.format("JOB, from %s , ");
         return returnStr;
     }

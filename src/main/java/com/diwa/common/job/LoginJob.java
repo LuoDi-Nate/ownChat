@@ -24,6 +24,16 @@ public class LoginJob extends Job {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public Thread killJob() {
+        return new Thread(new Runnable() {
+            public void run() {
+                
+            }
+        });
+    }
+
     @Override
     public String toString() {
         String returnStr = String.format("LoginJOB, from %s , ", this.getOperatorId());

@@ -15,7 +15,7 @@ import java.net.DatagramSocket;
  * Created by di on 6/4/15.
  */
 public class ChatServer {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         //打开jackson
         ObjectMapper entityReader = new ObjectMapper();
         //准备好entityHandler
@@ -29,7 +29,7 @@ public class ChatServer {
                 if (sv.getStates() == 1) break;
                 Thread.sleep(500);
             } catch (Exception e) {
-                throw new runServerException("trying sleep server error!");
+
             }
         }
 
@@ -37,23 +37,27 @@ public class ChatServer {
         Keeper keeper = new Keeper();
         keeper.start();
 
-        //开启服务器
-        DatagramSocket server = new DatagramSocket(sv.getPort());
-        sv.flashServerView("Server run...\nlisten on "+sv.getPort(), "wating for entity...");
-        while (sv.getStates() == 1) {
-            byte[] buff = new byte[2048];
-            DatagramPacket packet = new DatagramPacket(buff, buff.length);
-            server.receive(packet);
-            String jobStr = new String(packet.getData() , 0 , packet.getLength());
-            //反序列化MessageDto
-            System.out.println(jobStr);
-            MessageDto entity = entityReader.readValue(jobStr, MessageDto.class);
-            sv.flashServerView("got an entity!\tcome from :"+entity.getOperatorId());
-            //生产好,等待消费
-            Job job = entityHandler.dealWithEntity(entity);
-            sv.flashEventOnly("get a job!\t"+job.toString());
+        try {
+            //开启服务器
+            DatagramSocket server = new DatagramSocket(sv.getPort());
+            sv.flashServerView("Server run...\nlisten on " + sv.getPort(), "wating for entity...");
+            while (sv.getStates() == 1) {
+                byte[] buff = new byte[2048];
+                DatagramPacket packet = new DatagramPacket(buff, buff.length);
+                server.receive(packet);
+                String jobStr = new String(packet.getData(), 0, packet.getLength());
+                //反序列化MessageDto
+                System.out.println(jobStr);
+                MessageDto entity = entityReader.readValue(jobStr, MessageDto.class);
+                sv.flashServerView("got an entity!      come from :" + entity.getOperatorId());
+                //生产好,等待消费
+                Job job = entityHandler.dealWithEntity(entity);
+                sv.flashEventOnly("get a job!      " + job.toString());
 
-            Pool.getJobList().add(job);
+                Pool.getJobList().add(job);
+            }
+        }catch (Exception e){
+            sv.flashServerView(e.toString());
         }
     }
 }

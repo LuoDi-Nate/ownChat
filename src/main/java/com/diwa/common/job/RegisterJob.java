@@ -1,10 +1,15 @@
 package com.diwa.common.job;
 
+import com.diwa.chatServer.dao.UserDao;
+import com.diwa.chatServer.model.User;
+
+import java.util.Date;
+
 /**
  * Created by di on 29/4/15.
  */
 public class RegisterJob extends Job{
-    private String ip;
+    protected String ip;
     private int port;
     private String nickName;
     private String password;
@@ -41,6 +46,22 @@ public class RegisterJob extends Job{
         this.password = password;
     }
 
+
+    @Override
+    public Thread killJob() {
+        return new Thread(new Runnable() {
+            public void run() {
+                User user  = new User();
+                user.setNickName(nickName);
+                user.setIp(ip);
+                user.setCreateTime(new Date());
+                user.setPort(port);
+                user.setLastOnlineTime(new Date());
+                UserDao userDao = new UserDao();
+                userDao.createUser(user);
+            }
+        });
+    }
 
     @Override
     public String toString() {
