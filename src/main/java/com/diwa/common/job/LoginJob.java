@@ -29,7 +29,7 @@ public class LoginJob extends Job {
     public Thread killJob() {
         return new Thread(new Runnable() {
             public void run() {
-                
+
             }
         });
     }
