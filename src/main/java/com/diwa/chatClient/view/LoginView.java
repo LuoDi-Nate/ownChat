@@ -10,6 +10,9 @@ import java.util.Date;
  * Created by di on 1/5/15.
  */
 public class LoginView extends JFrame {
+    //param 0刚刚打开 1点击了register 2登陆成功
+    private int loginOrNot;
+
     //整体构架
     private Container cc;
     private JPanel topPanel;
