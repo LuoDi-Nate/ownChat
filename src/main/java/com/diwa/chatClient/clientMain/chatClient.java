@@ -19,7 +19,10 @@ public class ChatClient {
         @Override
         public void run() {
             while (true){
-                display(Status.status);
+                if(Status.getStatus() == 2 || Status.getStatus() == 3){
+                    break;
+                }
+                display(Status.getStatus());
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
