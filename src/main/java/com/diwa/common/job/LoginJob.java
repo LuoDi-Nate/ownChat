@@ -6,6 +6,9 @@ import java.util.Date;
  * Created by di on 29/4/15.
  */
 public class LoginJob extends Job {
+    private String nickName;
+    private String ip;
+    private int port;
     private int id;
     private Date time;
 
@@ -23,6 +26,30 @@ public class LoginJob extends Job {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override

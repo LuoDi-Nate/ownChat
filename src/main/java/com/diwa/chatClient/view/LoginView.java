@@ -1,8 +1,10 @@
 package com.diwa.chatClient.view;
 
-import com.diwa.chatClient.Vairable.Status;
+import com.diwa.chatClient.Vairable.Utils;
 import com.diwa.common.dto.MessageDto;
+import com.diwa.common.job.LoginJob;
 import com.diwa.common.job.RegisterJob;
+import javafx.animation.Animation;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.swing.*;
@@ -118,7 +120,7 @@ public class LoginView extends JFrame {
         registerBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //把status设置成1
-                Status.setStatus(1);
+                Utils.setStatus(1);
             }
         });
 
@@ -127,7 +129,7 @@ public class LoginView extends JFrame {
                 String nickName = getName();
                 String passwd = getPasswd();
                 int port = getPort();
-                if(port < 9999 || port > 65535){
+                if (port < 9999 || port > 65535) {
                     JOptionPane.showInputDialog("Port must in [10000, 65535]");
                     return;
                 }
@@ -139,7 +141,7 @@ public class LoginView extends JFrame {
                 } catch (UnknownHostException e1) {
                     e1.printStackTrace();
                 }
-                if(ip.equals("")){
+                if (ip.equals("")) {
                     JOptionPane.showInputDialog("无法得到本机IP");
                     ip = JOptionPane.showInputDialog(null, "input your ip manually.");
                 }
@@ -147,32 +149,31 @@ public class LoginView extends JFrame {
                 MessageDto entity = new MessageDto();
                 entity.setOption(1);    //登陆
                 entity.setOperatorId(-1);   //没有登陆 无法获得用户id
-                //填充register对象
-                RegisterJob registerForm = new RegisterJob();
-                registerForm.setNickName(nickName);
-                registerForm.setPort(port);
-                registerForm.setPassword(passwd);
-                registerForm.setIp(ip);
-                //把registerJob序列化成str
+                //填充login对象
+                LoginJob loginForm = new LoginJob();
+                loginForm.setOperatorId(-1);    //刚刚登陆时 用户不知道自己id
+                loginForm.setId(-1);
+                loginForm.setNickName(getName());
+                loginForm.setPort(getPort());
+                loginForm.setIp(ip);
+                loginForm.setTime(new Date());
+                //把loginJob序列化成str
                 ObjectMapper objectMapper = new ObjectMapper();
                 String context = "";
-                try{
-                    context = objectMapper.writeValueAsString(registerForm);
-                }catch (Exception e2){
+                try {
+                    context = objectMapper.writeValueAsString(loginForm);
+                } catch (Exception e2) {
                     e2.printStackTrace();
                 }
                 //entity对象拼装完成
                 entity.setContext(context);
-                //entity --> json
-                String entityStr = "";
+                //发送login消息
                 try {
-                    entityStr = objectMapper.writeValueAsString(entity);
+                    Utils.sendEntity(entity);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-                byte[] sendByte = entityStr.getBytes();
-
-                DatagramPacket dm = new DatagramPacket(sendByte, sendByte.length, serverIp, );
+                Utils.setStatus(2);
             }
         });
 
@@ -180,17 +181,17 @@ public class LoginView extends JFrame {
 
 
     //匿名内部类获得外部name
-    public String getName(){
+    public String getName() {
         return this.nickName.getText().trim();
     }
 
     //匿名内部类得到外部port
-    public int getPort(){
+    public int getPort() {
         return Integer.parseInt(this.port.getText());
     }
 
     //匿名内部类得到外部passwd
-    public String getPasswd(){
+    public String getPasswd() {
         return this.passwd.getText().trim();
     }
 

@@ -1,11 +1,10 @@
 package com.diwa.chatClient.clientMain;
 
 
-import com.diwa.chatClient.Vairable.Status;
+import com.diwa.chatClient.Vairable.Utils;
 import com.diwa.chatClient.view.ClientView;
 import com.diwa.chatClient.view.LoginView;
 import com.diwa.chatClient.view.RegisterView;
-import com.diwa.common.job.RegisterJob;
 
 /**
  * Created by di on 18/4/15.
@@ -19,10 +18,10 @@ public class ChatClient {
         @Override
         public void run() {
             while (true){
-                if(Status.getStatus() == 2 || Status.getStatus() == 3){
+                display(Utils.getStatus());
+                if(Utils.getStatus() == 2 || Utils.getStatus() == 3){
                     break;
                 }
-                display(Status.getStatus());
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -70,6 +69,5 @@ public class ChatClient {
 
     public static void main(String[] args) {
         ChatClient cc = new ChatClient();
-//        cc.login.setVisible(true);
     }
 }

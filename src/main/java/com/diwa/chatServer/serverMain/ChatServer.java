@@ -49,7 +49,7 @@ public class ChatServer {
                 //反序列化MessageDto
                 System.out.println(jobStr);
                 MessageDto entity = entityReader.readValue(jobStr, MessageDto.class);
-                sv.flashServerView("got an entity!      come from :" + entity.getOperatorId());
+                sv.flashServerView("got an entity!      come from :" + entity.getContext());
                 //生产好,等待消费
                 Job job = entityHandler.dealWithEntity(entity);
                 sv.flashEventOnly("get a job!      " + job.toString());
@@ -58,6 +58,7 @@ public class ChatServer {
             }
         }catch (Exception e){
             sv.flashServerView(e.toString());
+            e.printStackTrace();
         }
     }
 }

@@ -89,11 +89,19 @@ public class RegisterView extends JFrame {
     }
 
     public void actionInit() {
+        //resetBtn
         resetBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 nickName.setText("");
                 passwd.setText("");
                 port.setText("");
+            }
+        });
+
+        //signinBtn功能
+        registerBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
             }
         });
     }
