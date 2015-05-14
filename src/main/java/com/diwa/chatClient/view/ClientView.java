@@ -1,7 +1,11 @@
 package com.diwa.chatClient.view;
 
+import com.diwa.chatClient.Vairable.Utils;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
@@ -23,12 +27,12 @@ public class ClientView extends JFrame{
     //top
     private JLabel versionLabel;
     private JPanel friendPanel;
-    private JLabel nowFriend;
-    private JTextField displayText;
-    private JButton flashFriend;
+    private JTextField nowFriend;
+    private JTextArea displayText;
+    private JButton flashFriendBtn;
     private JPanel friendContext;
-    private List<JButton> friends;
-    private JButton[] friend;
+    private JTextArea friendList;
+    private JButton confirmFriendBtn;
 
     //bottom
     private JLabel consoleLabel;
@@ -60,33 +64,45 @@ public class ClientView extends JFrame{
         topPanel = new JPanel();
         versionLabel = new JLabel("Thx for useing this.    ver:1.0");
         friendPanel = new JPanel();
-        nowFriend = new JLabel("Let's Chat!");
-        displayText = new JTextField();
-        flashFriend = new JButton("FlashFriend");
-        friend = new JButton[100];
+        displayText = new JTextArea();
+        displayText.setEditable(false);
+        flashFriendBtn = new JButton("FlashFriend");
         friendContext = new JPanel();
-        nowFriend = new JLabel("Now:[nobady]");
+        nowFriend = new JTextField("Now:[nobady]");
+        confirmFriendBtn = new JButton("Comfirm Friend");
         cc.add(topPanel);
         topPanel.setLayout(new BorderLayout());
         topPanel.add(versionLabel, BorderLayout.NORTH);
-        topPanel.add(displayText, BorderLayout.CENTER);
+//        topPanel.add(displayText, BorderLayout.CENTER);
+        topPanel.add(new JScrollPane(displayText), BorderLayout.CENTER);
+        displayText.setLineWrap(true);
         topPanel.add(friendPanel, BorderLayout.EAST);
         friendPanel.setLayout(new BorderLayout());
         friendPanel.add(friendContext, BorderLayout.CENTER);
         friendContext.setBackground(Color.white);
+        friendList = new JTextArea();
+        friendContext.setLayout(new GridLayout(1,1));
+        friendContext.add(new JScrollPane(friendList));
+        friendList.setEditable(false);
+        friendList.setLineWrap(true);
+
         JPanel tempFriend = new JPanel();
         friendPanel.add(tempFriend, BorderLayout.SOUTH);
         tempFriend.setLayout(new GridLayout(2,1));
-        tempFriend.add(nowFriend);
-        tempFriend.add(flashFriend);
+        JPanel comfirmFriendPan = new JPanel();
+        comfirmFriendPan.setLayout(new GridLayout(2, 1));
+        comfirmFriendPan.add(nowFriend);
+        comfirmFriendPan.add(confirmFriendBtn);
+        tempFriend.add(comfirmFriendPan);
+        tempFriend.add(flashFriendBtn);
 
         //bottom
         bottomPanel = new JPanel();
         consoleLabel = new JLabel("WelCome,diwa say hi there!");
         downRightPanel1 = new JPanel();
         downRightPanel2 = new JPanel();
-        profile1 = new JLabel("NickName:["+this.nickName+"]");
-        profile2 = new JLabel("Port:["+this.port+"]");
+        profile1 = new JLabel("NickName:["+Utils.getSelfName()+"]");
+        profile2 = new JLabel("Port:["+Utils.getSelfPort()+"]");
         exitBtn = new JButton("Exit");
         exportBtn = new JButton("Export");
         inputText = new JTextField();
@@ -114,6 +130,41 @@ public class ClientView extends JFrame{
         bottomPanel2.add(resetBtn);
 
 
+        actionInit();
+    }
+
+    public void actionInit(){
+        confirmFriendBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String msg = "";
+                int distFriendInt = 0;
+                try{
+                    distFriendInt = Integer.parseInt(nowFriend.getText());
+                }catch (Exception e2){
+                    msg = "u try to talk someone, but\n"+nowFriend.getText()+" format error, try again please.\n";
+                    flushDisplay(msg);
+                }
+                //not 0, mean a correct friend
+                if(distFriendInt != 0){
+                    Utils.setDistFriend(distFriendInt);
+                    msg = "u want to talk with "+distFriendInt+" , ^_^";
+                    flushDisplay(msg);
+                }
+            }
+        });
+
+        exitBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Utils.setStatus(3);
+                System.exit(0);
+            }
+        });
+
+        flashFriendBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -144,5 +195,24 @@ public class ClientView extends JFrame{
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public void flushDisplay(String str){
+        String oldStr = displayText.getText();
+        String timeStr = new Date().toString();
+        displayText.setText(oldStr+"\n"+timeStr+"\n\t"+str);
+    }
+
+    public void flushFriend(List<String> list){
+        StringBuilder sb = new StringBuilder();
+        for(String str : list){
+            sb.append(str+"\n");
+        }
+        friendList.setText(sb.toString());
+    }
+
+    public void updateSelf(){
+        profile1.setText("hi, "+Utils.getSelfName());
+        profile2.setText("Port:["+Utils.getSelfPort()+"]");
     }
 }

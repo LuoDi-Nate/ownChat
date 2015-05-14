@@ -173,7 +173,12 @@ public class LoginView extends JFrame {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+                //将本地信息更新
                 Utils.setStatus(2);
+                //填好本地端口和ip
+                Utils.setSelfPort(getPort());
+                Utils.setSelfIpStr(ip);
+                Utils.setSelfName(getName());
             }
         });
 

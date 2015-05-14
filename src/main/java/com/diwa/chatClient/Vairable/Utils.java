@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.HashMap;
 
 /**
  * Created by di on 3/5/15.
@@ -16,6 +17,14 @@ public class Utils {
     private static String serverIpStr = "127.0.0.1";
     private static int serverPort = 9999;
 
+    private static String selfIpStr = "";
+    private static int selfPort = 0;
+    private static int selfId = -1;
+    private static int distFriend = 0;
+    private static String selfName = "";
+    private static HashMap<Integer, String> History = new HashMap<Integer, String>();
+
+    //发送entity方法 公用
     public static void sendEntity(MessageDto job) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -64,5 +73,45 @@ public class Utils {
 
     public static void setServerPort(int serverPort) {
         Utils.serverPort = serverPort;
+    }
+
+    public static String getSelfIpStr() {
+        return selfIpStr;
+    }
+
+    public static void setSelfIpStr(String selfIpStr) {
+        Utils.selfIpStr = selfIpStr;
+    }
+
+    public static int getSelfPort() {
+        return selfPort;
+    }
+
+    public static void setSelfPort(int selfPort) {
+        Utils.selfPort = selfPort;
+    }
+
+    public static int getSelfId() {
+        return selfId;
+    }
+
+    public static void setSelfId(int selfId) {
+        Utils.selfId = selfId;
+    }
+
+    public static int getDistFriend() {
+        return distFriend;
+    }
+
+    public static void setDistFriend(int distFriend) {
+        Utils.distFriend = distFriend;
+    }
+
+    public static String getSelfName() {
+        return selfName;
+    }
+
+    public static void setSelfName(String selfName) {
+        Utils.selfName = selfName;
     }
 }
