@@ -1,11 +1,17 @@
 package com.diwa.chatClient.view;
 
 import com.diwa.chatClient.Vairable.Utils;
+import com.diwa.common.dto.MessageDto;
+import com.diwa.common.job.MessageJob;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -13,6 +19,9 @@ import java.util.List;
  * Created by di on 2/5/15.
  */
 public class ClientView extends JFrame{
+    private final static Logger logger = LoggerFactory.getLogger(ClientView.class);
+
+
     //parameter
     private int port;
     private String nickName;
@@ -162,6 +171,39 @@ public class ClientView extends JFrame{
 
         flashFriendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        sendBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MessageJob messageJob = new MessageJob();
+                messageJob.setFromId(Utils.getSelfId());
+                messageJob.setToId(Utils.getDistFriend());
+                messageJob.setContext(inputText.getText());
+                inputText.setText("");
+                messageJob.setCreateTime(new Date());
+
+                String context = "";
+                ObjectMapper objectMapper = new ObjectMapper();
+                try{
+                    context = objectMapper.writeValueAsString(messageJob);
+                }catch (Exception e3){
+                    logger.error("Json error!", e3);
+                }
+
+                MessageDto entity = new MessageDto();
+                entity.setOption(2);
+                entity.setOperatorId(Utils.getSelfId());
+                entity.setContext(context);
+                try {
+                    Utils.sendEntity(entity);
+                } catch (IOException e1) {
+                    logger.error("send entity error!", e1);
+                }
+
+                //TODO
+                发送完消息后的处理 给本地加入history
 
             }
         });
