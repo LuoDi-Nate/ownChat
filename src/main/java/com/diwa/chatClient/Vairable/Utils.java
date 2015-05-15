@@ -23,7 +23,7 @@ public class Utils {
     private static int distFriend = 0;
     private static String selfName = "";
     private static boolean setDistFriendOrNot = false;
-    private static HashMap<Integer, String> History = new HashMap<Integer, String>();
+    private static HashMap<String, String> History = new HashMap<String, String>();
 
     //发送entity方法 公用
     public static void sendEntity(MessageDto job) throws IOException {
@@ -116,11 +116,11 @@ public class Utils {
         Utils.selfName = selfName;
     }
 
-    public static HashMap<Integer, String> getHistory() {
+    public static HashMap<String, String> getHistory() {
         return History;
     }
 
-    public static void setHistory(HashMap<Integer, String> history) {
+    public static void setHistory(HashMap<String, String> history) {
         History = history;
     }
 

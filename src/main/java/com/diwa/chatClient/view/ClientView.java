@@ -186,7 +186,7 @@ public class ClientView extends JFrame {
         sendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //判断是否有聊天对象
-                if(!Utils.isSetDistFriendOrNot()){
+                if (!Utils.isSetDistFriendOrNot()) {
                     flushDisplay("sorry buddy, please choose a chat target first!");
                     return;
                 }
@@ -214,27 +214,26 @@ public class ClientView extends JFrame {
                     logger.error("send entity error!", e1);
                 }
 
-                //刷新聊天记录 并刷新显示
-                Map<Integer, String> history = Utils.getHistory();
-                String oldHistory = history.get(Utils.getDistFriend());
-                if(oldHistory == null){
-                    oldHistory = "U are talking with : ["+Utils.getDistFriend()+"]\n";
-                }
-                String newHistory = oldHistory + "\n" +
-                        new Date().toString() + "\n" +
-                        "    [U] :" + inputText.getText();
-                history.remove(Utils.getDistFriend());
-                history.put(Utils.getDistFriend(), newHistory);
-                flushDisplayById(Utils.getDistFriend());
-
+                SetLogById("[U] :" + inputText.getText(), Utils.getSelfId());
                 inputText.setText("");
-
-
-
+                flushDisplayById(Utils.getDistFriend());
 
 
             }
         });
+    }
+
+    //刷新聊天记录 并刷新显示
+    public void SetLogById(String str, int id) {
+        Map<String, String> history = Utils.getHistory();
+        String oldHistory = history.get(Utils.getDistFriend() + "");
+        if (oldHistory == null) {
+            oldHistory = "U are talking with : [" + Utils.getDistFriend() + "]\n";
+        }
+        String newHistory = oldHistory + "\n" +
+                new Date().toString() + "\n    " + str;
+        history.remove(Utils.getDistFriend());
+        history.put(Utils.getDistFriend() + "", newHistory);
     }
 
     public static void main(String[] args) {
@@ -243,20 +242,20 @@ public class ClientView extends JFrame {
     }
 
     //时刻等待的线程 从server那边获取消息
-    class phoneKeeper extends Thread{
+    class phoneKeeper extends Thread {
         private ObjectMapper objectMapper;
 
         @Override
         public void run() {
             objectMapper = new ObjectMapper();
 
-            try{
+            try {
                 DatagramSocket clientPhone = new DatagramSocket(Utils.getSelfPort());
                 logger.info("phone runnig start on port", Utils.getSelfPort());
 
-                while (true){
+                while (true) {
                     //退出时 关闭
-                    if(Utils.getStatus() == 2 || Utils.getStatus() == 3){
+                    if (Utils.getStatus() == 2 || Utils.getStatus() == 3) {
                         break;
                     }
 
@@ -266,8 +265,23 @@ public class ClientView extends JFrame {
                     String jobStr = new String(packet.getData(), 0, packet.getLength());
                     Message2Client message = objectMapper.readValue(jobStr, Message2Client.class);
                     //如果是系统信息
-                    if(message.getFromId() == -10086){
+                    if (message.getFromId() == -10086) {
+                        dealWithSystem(message);
+                    } else {
+                        //不是系统信息 有人给自己发信息 判断是否是当前聊天者
+                        if (Utils.getDistFriend() == message.getFromId()) {
+                            //当前聊天对象 直接加入日志 并且刷新到面板
+                            SetLogById("   [" + message.getFromName() + "]:"
+                                    + message.getMsg(), message.getFromId());
 
+                            flushDisplayById(message.getFromId());
+                        } else {
+                            //不是当前聊天对象
+                            SetLogById("   [" + message.getFromName() + "]:"
+                                    + message.getMsg(), message.getFromId());
+
+                            consoleLabel.setText("\tU got a new msg from ["+message.getFromId()+"]!!");
+                        }
                     }
 
                 }
@@ -314,8 +328,8 @@ public class ClientView extends JFrame {
         displayText.setText(oldStr + "\n" + timeStr + "\n    " + str);
     }
 
-    public void flushDisplayById(int friendId){
-        String context = Utils.getHistory().get(friendId);
+    public void flushDisplayById(int friendId) {
+        String context = Utils.getHistory().get(friendId+"");
         displayText.setText(context);
     }
 
@@ -332,14 +346,19 @@ public class ClientView extends JFrame {
         profile2.setText("Port:[" + Utils.getSelfPort() + "]");
     }
 
-    public void flushConsole(String str){
-        consoleLabel.setText("\t"+str);
+    public void flushConsole(String str) {
+        consoleLabel.setText("\t" + str);
     }
 
     //打开电话 等待随时被server叫
-    public void openPhone(){
+    public void openPhone() {
         phoneKeeper phoneKeeper = new phoneKeeper();
         logger.info("phone is ready");
         phoneKeeper.start();
+    }
+
+    //处理系统来的信息
+    public void dealWithSystem(Message2Client message) {
+        //TODO
     }
 }

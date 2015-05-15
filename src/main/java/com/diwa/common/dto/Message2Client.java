@@ -7,7 +7,8 @@ package com.diwa.common.dto;
 public class Message2Client {
 
     //如果是系统服务 fromId 会是 -10086
-    private int fromId ;
+    private int fromId;
+    private String fromName;
     private String msg;
 
     public int getFromId() {
@@ -26,10 +27,19 @@ public class Message2Client {
         this.msg = msg;
     }
 
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
     @Override
     public String toString() {
         return "Message2Client{" +
                 "fromId=" + fromId +
+                ", fromName='" + fromName + '\'' +
                 ", msg='" + msg + '\'' +
                 '}';
     }
