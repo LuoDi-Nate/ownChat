@@ -5,6 +5,8 @@ package com.diwa.common.dto;
  * 只用于服务器给client转发别人的聊天
  */
 public class Message2Client {
+
+    //如果是系统服务 fromId 会是 -10086
     private int fromId ;
     private String msg;
 

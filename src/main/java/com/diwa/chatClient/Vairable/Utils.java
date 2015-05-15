@@ -22,6 +22,7 @@ public class Utils {
     private static int selfId = -1;
     private static int distFriend = 0;
     private static String selfName = "";
+    private static boolean setDistFriendOrNot = false;
     private static HashMap<Integer, String> History = new HashMap<Integer, String>();
 
     //发送entity方法 公用
@@ -113,5 +114,21 @@ public class Utils {
 
     public static void setSelfName(String selfName) {
         Utils.selfName = selfName;
+    }
+
+    public static HashMap<Integer, String> getHistory() {
+        return History;
+    }
+
+    public static void setHistory(HashMap<Integer, String> history) {
+        History = history;
+    }
+
+    public static boolean isSetDistFriendOrNot() {
+        return setDistFriendOrNot;
+    }
+
+    public static void setSetDistFriendOrNot(boolean setDistFriendOrNot) {
+        Utils.setDistFriendOrNot = setDistFriendOrNot;
     }
 }

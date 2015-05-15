@@ -5,9 +5,15 @@ import com.diwa.chatClient.Vairable.Utils;
 import com.diwa.chatClient.view.ClientView;
 import com.diwa.chatClient.view.LoginView;
 import com.diwa.chatClient.view.RegisterView;
+import com.diwa.common.dto.Message2Client;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.List;
 
 
@@ -46,13 +52,7 @@ public class ChatClient {
     }
 
 
-    //时刻等待的线程 从server那边获取消息
-    class phoneKeeper extends Thread{
-        @Override
-        public void run() {
 
-        }
-    }
 
     public ChatClient(){
         this.login = new LoginView();

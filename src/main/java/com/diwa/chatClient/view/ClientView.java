@@ -1,6 +1,7 @@
 package com.diwa.chatClient.view;
 
 import com.diwa.chatClient.Vairable.Utils;
+import com.diwa.common.dto.Message2Client;
 import com.diwa.common.dto.MessageDto;
 import com.diwa.common.job.MessageJob;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,13 +13,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.*;
 import java.util.List;
 
 /**
  * Created by di on 2/5/15.
  */
-public class ClientView extends JFrame{
+public class ClientView extends JFrame {
     private final static Logger logger = LoggerFactory.getLogger(ClientView.class);
 
 
@@ -56,7 +60,7 @@ public class ClientView extends JFrame{
     private JButton sendBtn;
     private JButton resetBtn;
 
-    public ClientView(){
+    public ClientView() {
         cc = getContentPane();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -66,12 +70,12 @@ public class ClientView extends JFrame{
         init();
     }
 
-    public void init(){
-        cc.setLayout(new GridLayout(2,1));
+    public void init() {
+        cc.setLayout(new GridLayout(2, 1));
 
         //top
         topPanel = new JPanel();
-        versionLabel = new JLabel("Thx for useing this.    ver:1.0");
+        versionLabel = new JLabel("\tThx for useing this.    ver:[1.0]");
         friendPanel = new JPanel();
         displayText = new JTextArea();
         displayText.setEditable(false);
@@ -90,14 +94,14 @@ public class ClientView extends JFrame{
         friendPanel.add(friendContext, BorderLayout.CENTER);
         friendContext.setBackground(Color.white);
         friendList = new JTextArea();
-        friendContext.setLayout(new GridLayout(1,1));
+        friendContext.setLayout(new GridLayout(1, 1));
         friendContext.add(new JScrollPane(friendList));
         friendList.setEditable(false);
         friendList.setLineWrap(true);
 
         JPanel tempFriend = new JPanel();
         friendPanel.add(tempFriend, BorderLayout.SOUTH);
-        tempFriend.setLayout(new GridLayout(2,1));
+        tempFriend.setLayout(new GridLayout(2, 1));
         JPanel comfirmFriendPan = new JPanel();
         comfirmFriendPan.setLayout(new GridLayout(2, 1));
         comfirmFriendPan.add(nowFriend);
@@ -110,8 +114,8 @@ public class ClientView extends JFrame{
         consoleLabel = new JLabel("WelCome,diwa say hi there!");
         downRightPanel1 = new JPanel();
         downRightPanel2 = new JPanel();
-        profile1 = new JLabel("NickName:["+Utils.getSelfName()+"]");
-        profile2 = new JLabel("Port:["+Utils.getSelfPort()+"]");
+        profile1 = new JLabel("NickName:[" + Utils.getSelfName() + "]");
+        profile2 = new JLabel("Port:[" + Utils.getSelfPort() + "]");
         exitBtn = new JButton("Exit");
         exportBtn = new JButton("Export");
         inputText = new JTextField();
@@ -128,10 +132,10 @@ public class ClientView extends JFrame{
         tempProfilePanel.setLayout(new GridLayout(2, 1));
         tempProfilePanel.add(downRightPanel1);
         tempProfilePanel.add(downRightPanel2);
-        downRightPanel1.setLayout(new GridLayout(2,1));
+        downRightPanel1.setLayout(new GridLayout(2, 1));
         downRightPanel1.add(profile1);
         downRightPanel1.add(profile2);
-        downRightPanel2.setLayout(new GridLayout(2,1));
+        downRightPanel2.setLayout(new GridLayout(2, 1));
         downRightPanel2.add(exportBtn);
         downRightPanel2.add(exitBtn);
 
@@ -142,22 +146,26 @@ public class ClientView extends JFrame{
         actionInit();
     }
 
-    public void actionInit(){
+    public void actionInit() {
         confirmFriendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String msg = "";
                 int distFriendInt = 0;
-                try{
+                try {
                     distFriendInt = Integer.parseInt(nowFriend.getText());
-                }catch (Exception e2){
-                    msg = "u try to talk someone, but\n"+nowFriend.getText()+" format error, try again please.\n";
+                } catch (Exception e2) {
+                    msg = "u try to talk someone, but\n" + nowFriend.getText() + " format error, try again please.\n";
                     flushDisplay(msg);
                 }
                 //not 0, mean a correct friend
-                if(distFriendInt != 0){
+                if (distFriendInt != 0) {
                     Utils.setDistFriend(distFriendInt);
-                    msg = "u want to talk with "+distFriendInt+" , ^_^";
-                    flushDisplay(msg);
+                    msg = "u want to talk with [" + distFriendInt + "] , ^_^  switch display ...";
+                    flushConsole(msg);
+                    //把设置flag调成true
+                    Utils.setSetDistFriendOrNot(true);
+                    //把视图切换到该聊天对象
+                    flushDisplayById(distFriendInt);
                 }
             }
         });
@@ -177,18 +185,22 @@ public class ClientView extends JFrame{
 
         sendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                //判断是否有聊天对象
+                if(!Utils.isSetDistFriendOrNot()){
+                    flushDisplay("sorry buddy, please choose a chat target first!");
+                    return;
+                }
                 MessageJob messageJob = new MessageJob();
                 messageJob.setFromId(Utils.getSelfId());
                 messageJob.setToId(Utils.getDistFriend());
                 messageJob.setContext(inputText.getText());
-                inputText.setText("");
                 messageJob.setCreateTime(new Date());
 
                 String context = "";
                 ObjectMapper objectMapper = new ObjectMapper();
-                try{
+                try {
                     context = objectMapper.writeValueAsString(messageJob);
-                }catch (Exception e3){
+                } catch (Exception e3) {
                     logger.error("Json error!", e3);
                 }
 
@@ -202,8 +214,24 @@ public class ClientView extends JFrame{
                     logger.error("send entity error!", e1);
                 }
 
-                //TODO
-                发送完消息后的处理 给本地加入history
+                //刷新聊天记录 并刷新显示
+                Map<Integer, String> history = Utils.getHistory();
+                String oldHistory = history.get(Utils.getDistFriend());
+                if(oldHistory == null){
+                    oldHistory = "U are talking with : ["+Utils.getDistFriend()+"]\n";
+                }
+                String newHistory = oldHistory + "\n" +
+                        new Date().toString() + "\n" +
+                        "    [U] :" + inputText.getText();
+                history.remove(Utils.getDistFriend());
+                history.put(Utils.getDistFriend(), newHistory);
+                flushDisplayById(Utils.getDistFriend());
+
+                inputText.setText("");
+
+
+
+
 
             }
         });
@@ -212,6 +240,47 @@ public class ClientView extends JFrame{
     public static void main(String[] args) {
         ClientView cv = new ClientView();
         cv.setVisible(true);
+    }
+
+    //时刻等待的线程 从server那边获取消息
+    class phoneKeeper extends Thread{
+        private ObjectMapper objectMapper;
+
+        @Override
+        public void run() {
+            objectMapper = new ObjectMapper();
+
+            try{
+                DatagramSocket clientPhone = new DatagramSocket(Utils.getSelfPort());
+                logger.info("phone runnig start on port", Utils.getSelfPort());
+
+                while (true){
+                    //退出时 关闭
+                    if(Utils.getStatus() == 2 || Utils.getStatus() == 3){
+                        break;
+                    }
+
+                    byte[] buff = new byte[2048];
+                    DatagramPacket packet = new DatagramPacket(buff, buff.length);
+                    clientPhone.receive(packet);
+                    String jobStr = new String(packet.getData(), 0, packet.getLength());
+                    Message2Client message = objectMapper.readValue(jobStr, Message2Client.class);
+                    //如果是系统信息
+                    if(message.getFromId() == -10086){
+
+                    }
+
+                }
+            } catch (SocketException e) {
+                e.printStackTrace();
+                logger.error(String.valueOf(e));
+            } catch (IOException e2) {
+                e2.printStackTrace();
+                logger.error(e2.toString());
+
+            }
+
+        }
     }
 
     //getter setters
@@ -239,22 +308,38 @@ public class ClientView extends JFrame{
         this.ip = ip;
     }
 
-    public void flushDisplay(String str){
+    public void flushDisplay(String str) {
         String oldStr = displayText.getText();
         String timeStr = new Date().toString();
-        displayText.setText(oldStr+"\n"+timeStr+"\n\t"+str);
+        displayText.setText(oldStr + "\n" + timeStr + "\n    " + str);
     }
 
-    public void flushFriend(List<String> list){
+    public void flushDisplayById(int friendId){
+        String context = Utils.getHistory().get(friendId);
+        displayText.setText(context);
+    }
+
+    public void flushFriend(List<String> list) {
         StringBuilder sb = new StringBuilder();
-        for(String str : list){
-            sb.append(str+"\n");
+        for (String str : list) {
+            sb.append(str + "\n");
         }
         friendList.setText(sb.toString());
     }
 
-    public void updateSelf(){
-        profile1.setText("hi, "+Utils.getSelfName());
-        profile2.setText("Port:["+Utils.getSelfPort()+"]");
+    public void updateSelf() {
+        profile1.setText("hi, " + Utils.getSelfName());
+        profile2.setText("Port:[" + Utils.getSelfPort() + "]");
+    }
+
+    public void flushConsole(String str){
+        consoleLabel.setText("\t"+str);
+    }
+
+    //打开电话 等待随时被server叫
+    public void openPhone(){
+        phoneKeeper phoneKeeper = new phoneKeeper();
+        logger.info("phone is ready");
+        phoneKeeper.start();
     }
 }
