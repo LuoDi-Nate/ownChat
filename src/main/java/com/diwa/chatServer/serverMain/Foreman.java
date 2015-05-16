@@ -14,6 +14,7 @@ import java.util.HashMap;
 public class Foreman {
     public static void pushWorker(Job job){
         Thread worker = job.killJob();
+        System.out.println("just push a worker");
         worker.start();
     }
 }

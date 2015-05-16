@@ -8,6 +8,7 @@ public class Message2Client {
 
     //如果是系统服务 fromId 会是 -10086
     private int fromId;
+    //如果是系统 fromName 会是 10086
     private String fromName;
     private String msg;
 

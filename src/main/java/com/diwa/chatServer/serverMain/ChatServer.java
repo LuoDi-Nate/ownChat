@@ -2,6 +2,7 @@ package com.diwa.chatServer.serverMain;
 
 import com.diwa.chatServer.model.Pool;
 import com.diwa.chatServer.service.EntityHandler;
+import com.diwa.chatServer.temp.Temp;
 import com.diwa.chatServer.view.ServerView;
 import com.diwa.common.dto.MessageDto;
 import com.diwa.common.exceptions.runServerException;
@@ -10,6 +11,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by di on 6/4/15.
@@ -36,6 +39,9 @@ public class ChatServer {
         //先开启keeper
         Keeper keeper = new Keeper();
         keeper.start();
+
+        //在在线池里加入自己
+        Temp.OnlineUsers.put("10086", -10086);
 
         try {
             //开启服务器

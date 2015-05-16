@@ -22,7 +22,7 @@ public class Keeper extends Thread {
                 try {
 
                     Thread.sleep(200);
-                    logger.info("no job to do , sleep for a while.");
+//                    logger.info("no job to do , sleep for a while.");
                     continue;
                 } catch (InterruptedException e) {
                     e.printStackTrace();

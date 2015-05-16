@@ -27,7 +27,7 @@ public class Utils {
     //History<"100", "diwa">
     private static HashMap<String, String> History = new HashMap<String, String>();
 
-    private static HashMap<Integer, String> friendMap = new HashMap<Integer, String>();
+    public static HashMap<Integer, String> friendMap = new HashMap<Integer, String>();
 
     //发送entity方法 公用
     public static void sendEntity(MessageDto job) throws IOException {

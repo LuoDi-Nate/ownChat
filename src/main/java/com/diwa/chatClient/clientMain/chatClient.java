@@ -40,6 +40,7 @@ public class ChatClient {
 
                 //状态常量 0:刚刚打开程序需要登录 1:点击注册跳转 2:已经登陆聊天界面 3:退出
                 if(Utils.getStatus() == 2 || Utils.getStatus() == 3){
+                    openPhone();
                     break;
                 }
                 try {
@@ -50,7 +51,6 @@ public class ChatClient {
             }
         }
     }
-
 
 
 
@@ -95,11 +95,9 @@ public class ChatClient {
         ChatClient cc = new ChatClient();
     }
 
-    public void flushFriendList(List<String> list) {
-        this.client.flushFriend(list);
-    }
 
-    public void getMsg(){
-
+    //在有了port和ip后打开
+    public void openPhone(){
+        this.client.openPhone();
     }
 }

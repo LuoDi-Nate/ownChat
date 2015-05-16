@@ -3,7 +3,10 @@ package com.diwa.chatClient.view;
 import com.diwa.chatClient.Vairable.Utils;
 import com.diwa.common.dto.Message2Client;
 import com.diwa.common.dto.MessageDto;
+import com.diwa.common.dto.OnlineFriend;
+import com.diwa.common.job.FlashFriendJob;
 import com.diwa.common.job.MessageJob;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,10 +203,32 @@ public class ClientView extends JFrame {
 
         flashFriendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                FlashFriendJob flashFriendJob = new FlashFriendJob();
+                flashFriendJob.setOperatorId(Utils.getSelfId());
+                flashFriendJob.setSelfIp(Utils.getSelfIpStr());
+                flashFriendJob.setSelfNickName(Utils.getSelfName());
+                flashFriendJob.setSelfPort(Utils.getSelfPort());
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String context = "";
+                try {
+                    context = objectMapper.writeValueAsString(flashFriendJob);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
                 MessageDto entity = new MessageDto();
                 entity.setOperatorNickName(Utils.getSelfName());
-                entity.setContext("");
+                entity.setContext(context);
                 entity.setOption(4);
+
+                try {
+                    Utils.sendEntity(entity);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                flushConsole("    U just ask server for friends who online");
 
             }
         });
@@ -247,6 +272,9 @@ public class ClientView extends JFrame {
 
             }
         });
+
+        //打开对server的收听
+//        openPhone();
     }
 
     //刷新聊天记录 并刷新显示
@@ -269,19 +297,19 @@ public class ClientView extends JFrame {
 
     //时刻等待的线程 从server那边获取消息
     class phoneKeeper extends Thread {
-        private ObjectMapper objectMapper;
 
         @Override
         public void run() {
-            objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
 
             try {
-                DatagramSocket clientPhone = new DatagramSocket(Utils.getSelfPort());
-                logger.info("phone runnig start on port", Utils.getSelfPort());
+                int selfPort = Utils.getSelfPort();
+                DatagramSocket clientPhone = new DatagramSocket(selfPort);
+                logger.info("phone runnig start on port"+Utils.getSelfPort());
 
                 while (true) {
                     //退出时 关闭
-                    if (Utils.getStatus() == 2 || Utils.getStatus() == 3) {
+                    if (Utils.getStatus() == 3) {
                         break;
                     }
 
@@ -290,6 +318,7 @@ public class ClientView extends JFrame {
                     clientPhone.receive(packet);
                     String jobStr = new String(packet.getData(), 0, packet.getLength());
                     Message2Client message = objectMapper.readValue(jobStr, Message2Client.class);
+                    logger.info(message.toString());
                     //如果是系统信息
                     if (message.getFromId() == -10086) {
                         dealWithSystem(message);
@@ -359,12 +388,8 @@ public class ClientView extends JFrame {
         displayText.setText(context);
     }
 
-    public void flushFriend(List<String> list) {
-        StringBuilder sb = new StringBuilder();
-        for (String str : list) {
-            sb.append(str + "\n");
-        }
-        friendList.setText(sb.toString());
+    public void flushFriend(String str) {
+        friendList.setText(str);
     }
 
     public void updateSelf() {
@@ -381,10 +406,23 @@ public class ClientView extends JFrame {
         phoneKeeper phoneKeeper = new phoneKeeper();
         logger.info("phone is ready");
         phoneKeeper.start();
+        logger.info("phone should running");
     }
 
     //处理系统来的信息
-    public void dealWithSystem(Message2Client message) {
-        //TODO
+    public void dealWithSystem(Message2Client message) throws IOException {
+        logger.info("got a list of friend");
+        String list = message.getMsg();
+        ObjectMapper objectMapper = new ObjectMapper();
+        OnlineFriend friendMapObj = objectMapper.readValue(list, OnlineFriend.class);
+
+        HashMap<String, Integer> friendMap = friendMapObj.getFriendMap();
+        String flashStr = "";
+        for (String str:friendMap.keySet()){
+            Utils.friendMap.put(friendMap.get(str), str);
+            flashStr += "    $["+friendMap.get(str)+"]"+"\n";
+            flashStr += str;
+        }
+        flushFriend(flashStr);
     }
 }
