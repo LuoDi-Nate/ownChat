@@ -20,7 +20,7 @@ public class TestSendPackageToServer {
 
         DatagramSocket ds = new DatagramSocket();
         MessageDto md = new MessageDto();
-        md.setOperatorId(111);
+        md.setOperatorNickName("diwa");
         md.setOption(0);
         md.setContext("lalala");
         String sendStr = objectMapper.writeValueAsString(md);

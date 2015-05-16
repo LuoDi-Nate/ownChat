@@ -148,7 +148,7 @@ public class LoginView extends JFrame {
                 //填充messageDto
                 MessageDto entity = new MessageDto();
                 entity.setOption(1);    //登陆
-                entity.setOperatorId(-1);   //没有登陆 无法获得用户id
+                entity.setOperatorNickName(nickName);   //没有登陆 无法获得用户id
                 //填充login对象
                 LoginJob loginForm = new LoginJob();
                 loginForm.setOperatorId(-1);    //刚刚登陆时 用户不知道自己id

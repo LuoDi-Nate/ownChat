@@ -6,14 +6,14 @@ import java.util.Date;
  * Created by di on 18/4/15.
  */
 public class MessageDto {
-    //0:注册 1:登陆 2:发送消息 3:下线
+    //0:注册 1:登陆 2:发送消息 3:下线 4:请求在线好友
     private int option;
 
     //一个json字符串 可以反序列化成任何实体
     private String context;
 
     //发送来命令的用户id
-    private int operatorId;
+    private String operatorNickName;
 
     public int getOption() {
         return option;
@@ -31,12 +31,12 @@ public class MessageDto {
         this.context = context;
     }
 
-    public int getOperatorId() {
-        return operatorId;
+    public String getOperatorNickName() {
+        return operatorNickName;
     }
 
-    public void setOperatorId(int operatorId) {
-        this.operatorId = operatorId;
+    public void setOperatorNickName(String operatorNickName) {
+        this.operatorNickName = operatorNickName;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MessageDto {
         return "MessageDto{" +
                 "option=" + option +
                 ", context='" + context + '\'' +
-                ", operatorId=" + operatorId +
+                ", operatorNickName='" + operatorNickName + '\'' +
                 '}';
     }
 }

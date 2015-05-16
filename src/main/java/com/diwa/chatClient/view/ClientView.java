@@ -151,16 +151,37 @@ public class ClientView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String msg = "";
                 int distFriendInt = 0;
+
                 try {
+                    //先试图按照id解析
                     distFriendInt = Integer.parseInt(nowFriend.getText());
                 } catch (Exception e2) {
-                    msg = "u try to talk someone, but\n" + nowFriend.getText() + " format error, try again please.\n";
-                    flushDisplay(msg);
+                    //用户输入的不是数字
+                    String friendNickName = nowFriend.getText().trim();
+                    int friendId = Utils.getIdByName(friendNickName);
+                    if(friendId == -1){
+                        //这个好友不存在
+                        msg = "u try to talk someone, but\n" + nowFriend.getText() + " is not exists, try again please.\n";
+                        flushDisplay(msg);
+                    }else {
+                        //好友存在 根据nickname拿到id
+                        distFriendInt = friendId;
+                    }
                 }
                 //not 0, mean a correct friend
                 if (distFriendInt != 0) {
+                    //看本地好友列表有没有这个好友
+                    HashMap<Integer, String> friendMap = Utils.getFriendMap();
+                    String friendNickName = friendMap.get(distFriendInt);
+                    if(friendNickName == null){
+                        //没有该好友
+                        msg = "u try to talk someone, but\n" + nowFriend.getText() + " is not exists, try again please.\n";
+                        flushDisplay(msg);
+                        return;
+                    }
+                    //有该好友
                     Utils.setDistFriend(distFriendInt);
-                    msg = "u want to talk with [" + distFriendInt + "] , ^_^  switch display ...";
+                    msg = "u want to talk with [" + friendNickName + "] , ^_^  switch display ...";
                     flushConsole(msg);
                     //把设置flag调成true
                     Utils.setSetDistFriendOrNot(true);
@@ -179,6 +200,10 @@ public class ClientView extends JFrame {
 
         flashFriendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                MessageDto entity = new MessageDto();
+                entity.setOperatorNickName(Utils.getSelfName());
+                entity.setContext("");
+                entity.setOption(4);
 
             }
         });
@@ -195,6 +220,7 @@ public class ClientView extends JFrame {
                 messageJob.setToId(Utils.getDistFriend());
                 messageJob.setContext(inputText.getText());
                 messageJob.setCreateTime(new Date());
+                messageJob.setToNickName(Utils.getFriendMap().get(Utils.getDistFriend()+""));
 
                 String context = "";
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -206,7 +232,7 @@ public class ClientView extends JFrame {
 
                 MessageDto entity = new MessageDto();
                 entity.setOption(2);
-                entity.setOperatorId(Utils.getSelfId());
+                entity.setOperatorNickName(Utils.getSelfName());
                 entity.setContext(context);
                 try {
                     Utils.sendEntity(entity);
@@ -226,14 +252,14 @@ public class ClientView extends JFrame {
     //刷新聊天记录 并刷新显示
     public void SetLogById(String str, int id) {
         Map<String, String> history = Utils.getHistory();
-        String oldHistory = history.get(Utils.getDistFriend() + "");
+        String oldHistory = history.get(id + "");
         if (oldHistory == null) {
             oldHistory = "U are talking with : [" + Utils.getDistFriend() + "]\n";
         }
         String newHistory = oldHistory + "\n" +
                 new Date().toString() + "\n    " + str;
         history.remove(Utils.getDistFriend());
-        history.put(Utils.getDistFriend() + "", newHistory);
+        history.put(id + "", newHistory);
     }
 
     public static void main(String[] args) {

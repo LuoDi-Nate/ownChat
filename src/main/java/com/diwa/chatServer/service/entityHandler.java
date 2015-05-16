@@ -28,6 +28,9 @@ public class EntityHandler {
             //下线
             case 3: resultJob = objectMapper.readValue(messageDto.getContext(), new LogoutJob().getClass());
                 break;
+            //请求好友列表
+            case 4: resultJob = objectMapper.readValue(messageDto.getContext(), new FlashFriendJob().getClass());
+                break;
         }
         return resultJob;
     }

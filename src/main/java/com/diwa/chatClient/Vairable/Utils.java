@@ -23,7 +23,11 @@ public class Utils {
     private static int distFriend = 0;
     private static String selfName = "";
     private static boolean setDistFriendOrNot = false;
+
+    //History<"100", "diwa">
     private static HashMap<String, String> History = new HashMap<String, String>();
+
+    private static HashMap<Integer, String> friendMap = new HashMap<Integer, String>();
 
     //发送entity方法 公用
     public static void sendEntity(MessageDto job) throws IOException {
@@ -130,5 +134,26 @@ public class Utils {
 
     public static void setSetDistFriendOrNot(boolean setDistFriendOrNot) {
         Utils.setDistFriendOrNot = setDistFriendOrNot;
+    }
+
+    public static HashMap<Integer, String> getFriendMap() {
+        return friendMap;
+    }
+
+    public static void setFriendMap(HashMap<Integer, String> friendMap) {
+        Utils.friendMap = friendMap;
+    }
+
+    //根据好友昵称得到好友id 如果没有 返回-1
+    public static int getIdByName(String friendNickName){
+        if(friendMap.size() == 0){return -1;}
+        for (Integer integer : friendMap.keySet()) {
+            if(friendMap.get(integer).equals(friendNickName)){
+                return integer;
+            }
+        }
+
+        //说明没有该好友
+        return -1;
     }
 }

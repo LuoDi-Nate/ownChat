@@ -8,6 +8,7 @@ import java.util.Date;
 public class MessageJob extends Job {
     private int fromId;
     private int toId;
+    private String toNickName;
     private String context;
     private Date createTime;
 
@@ -41,6 +42,14 @@ public class MessageJob extends Job {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getToNickName() {
+        return toNickName;
+    }
+
+    public void setToNickName(String toNickName) {
+        this.toNickName = toNickName;
     }
 
     @Override
