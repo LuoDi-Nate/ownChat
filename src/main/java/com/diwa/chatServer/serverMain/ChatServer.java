@@ -41,7 +41,7 @@ public class ChatServer {
         keeper.start();
 
         //在在线池里加入自己
-        Temp.OnlineUsers.put("10086", -10086);
+        Temp.OnlineUsers.put("系统服务", -10086);
 
         try {
             //开启服务器

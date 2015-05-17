@@ -12,7 +12,7 @@ public class MessageDto {
     //一个json字符串 可以反序列化成任何实体
     private String context;
 
-    //发送来命令的用户id
+    //发送来命令的用户name
     private String operatorNickName;
 
     public int getOption() {

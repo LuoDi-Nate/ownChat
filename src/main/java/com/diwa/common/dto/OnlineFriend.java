@@ -7,6 +7,7 @@ import java.util.HashMap;
  */
 public class OnlineFriend {
 
+    //<"diwa", "">
     private HashMap<String, Integer> friendMap;
 
     public HashMap<String, Integer> getFriendMap() {

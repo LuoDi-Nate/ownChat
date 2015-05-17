@@ -1,5 +1,7 @@
 package com.diwa.common.job;
 
+import com.diwa.chatServer.temp.Temp;
+
 import java.util.Date;
 
 /**
@@ -56,7 +58,12 @@ public class LoginJob extends Job {
     public Thread killJob() {
         return new Thread(new Runnable() {
             public void run() {
-
+                //<"diwa", "13434">
+                Temp.OnlineUsers.put(nickName, port);
+                System.out.println("add "+nickName+" in onlineMap");
+                //<"diwa", "127.0.0.1#50000">
+                Temp.UserAddress.put(nickName, ip+"#"+port);
+                System.out.println("add "+nickName+" in addressBook");
             }
         });
     }

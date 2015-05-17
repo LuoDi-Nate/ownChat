@@ -21,13 +21,17 @@ public class Utils {
     private static int selfPort = 0;
     private static int selfId = -1;
     private static int distFriend = 0;
+    private static String distFriendName = "";
     private static String selfName = "";
     private static boolean setDistFriendOrNot = false;
 
-    //History<"100", "diwa">
+    //old History<"100", "diwa">
+    //now History<"diwa", "xxxx">
     private static HashMap<String, String> History = new HashMap<String, String>();
 
-    public static HashMap<Integer, String> friendMap = new HashMap<Integer, String>();
+    //old <101, "xxx\nxxx\n">
+    //now <"diwa", "">
+    public static HashMap<String, String> friendMap = new HashMap<String, String>();
 
     //发送entity方法 公用
     public static void sendEntity(MessageDto job) throws IOException {
@@ -62,6 +66,14 @@ public class Utils {
 
     public static void setStatus(int status) {
         Utils.status = status;
+    }
+
+    public static String getDistFriendName() {
+        return distFriendName;
+    }
+
+    public static void setDistFriendName(String distFriendName) {
+        Utils.distFriendName = distFriendName;
     }
 
     public static String getServerIp() {
@@ -136,24 +148,36 @@ public class Utils {
         Utils.setDistFriendOrNot = setDistFriendOrNot;
     }
 
-    public static HashMap<Integer, String> getFriendMap() {
+    public static HashMap<String, String> getFriendMap() {
         return friendMap;
     }
 
-    public static void setFriendMap(HashMap<Integer, String> friendMap) {
+    public static void setFriendMap(HashMap<String, String> friendMap) {
         Utils.friendMap = friendMap;
     }
 
     //根据好友昵称得到好友id 如果没有 返回-1
-    public static int getIdByName(String friendNickName){
-        if(friendMap.size() == 0){return -1;}
-        for (Integer integer : friendMap.keySet()) {
-            if(friendMap.get(integer).equals(friendNickName)){
-                return integer;
+//    public static int getIdByName(String friendNickName){
+//        if(friendMap.size() == 0){return -1;}
+//        for (Integer integer : friendMap.keySet()) {
+//            if(friendMap.get(integer).equals(friendNickName)){
+//                return integer;
+//            }
+//        }
+//
+//        //说明没有该好友
+//        return -1;
+//    }
+    //判断用户好友列表是否存在一个人
+    public static boolean isFriendExists(String name) {
+        if (name == null) {
+            return false;
+        }
+        for (String s : friendMap.keySet()) {
+            if (s.equals(name)) {
+                return true;
             }
         }
-
-        //说明没有该好友
-        return -1;
+        return false;
     }
 }

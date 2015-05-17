@@ -6,7 +6,6 @@ import com.diwa.common.dto.MessageDto;
 import com.diwa.common.dto.OnlineFriend;
 import com.diwa.common.job.FlashFriendJob;
 import com.diwa.common.job.MessageJob;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by di on 2/5/15.
@@ -153,44 +151,42 @@ public class ClientView extends JFrame {
         confirmFriendBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String msg = "";
-                int distFriendInt = 0;
-
-                try {
-                    //先试图按照id解析
-                    distFriendInt = Integer.parseInt(nowFriend.getText());
-                } catch (Exception e2) {
+//                int distFriendInt = 0;
+                String distFriendName = "";
+//                try {
+//                    //先试图按照id解析
+////                    distFriendInt = Integer.parseInt(nowFriend.getText());
+//                } catch (Exception e2) {
                     //用户输入的不是数字
+//                    String friendNickName = nowFriend.getText().trim();
+//                    int friendId = Utils.getIdByName(friendNickName);
+//                    if(friendId == -1){
+//                        //这个好友不存在
+//                        msg = "u try to talk someone, but\n" + nowFriend.getText() + " is not exists, try again please.\n";
+//                        flushDisplay(msg);
+//                    }else {
+//                        //好友存在 根据nickname拿到id
+//                        distFriendInt = friendId;
+//                    }
                     String friendNickName = nowFriend.getText().trim();
-                    int friendId = Utils.getIdByName(friendNickName);
-                    if(friendId == -1){
-                        //这个好友不存在
+                    if(!Utils.isFriendExists(friendNickName)){
+                        //好友不存在
                         msg = "u try to talk someone, but\n" + nowFriend.getText() + " is not exists, try again please.\n";
                         flushDisplay(msg);
                     }else {
-                        //好友存在 根据nickname拿到id
-                        distFriendInt = friendId;
+                        //好友存在
+                        distFriendName = friendNickName;
                     }
-                }
-                //not 0, mean a correct friend
-                if (distFriendInt != 0) {
-                    //看本地好友列表有没有这个好友
-                    HashMap<Integer, String> friendMap = Utils.getFriendMap();
-                    String friendNickName = friendMap.get(distFriendInt);
-                    if(friendNickName == null){
-                        //没有该好友
-                        msg = "u try to talk someone, but\n" + nowFriend.getText() + " is not exists, try again please.\n";
-                        flushDisplay(msg);
-                        return;
-                    }
+
+//                }
                     //有该好友
-                    Utils.setDistFriend(distFriendInt);
-                    msg = "u want to talk with [" + friendNickName + "] , ^_^  switch display ...";
+                    Utils.setDistFriendName(distFriendName);
+                    msg = "u want to talk with [" + distFriendName + "] , ^_^  switch display ...";
                     flushConsole(msg);
                     //把设置flag调成true
                     Utils.setSetDistFriendOrNot(true);
                     //把视图切换到该聊天对象
-                    flushDisplayById(distFriendInt);
-                }
+                    flushDisplayByName(distFriendName);
             }
         });
 
@@ -245,7 +241,9 @@ public class ClientView extends JFrame {
                 messageJob.setToId(Utils.getDistFriend());
                 messageJob.setContext(inputText.getText());
                 messageJob.setCreateTime(new Date());
-                messageJob.setToNickName(Utils.getFriendMap().get(Utils.getDistFriend()+""));
+                messageJob.setFromName(Utils.getSelfName());
+                String toNickName = Utils.getDistFriendName();
+                messageJob.setToNickName(toNickName);
 
                 String context = "";
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -265,9 +263,9 @@ public class ClientView extends JFrame {
                     logger.error("send entity error!", e1);
                 }
 
-                SetLogById("[U] :" + inputText.getText(), Utils.getSelfId());
+                SetLogById("[U] :" + inputText.getText(), Utils.getDistFriendName());
                 inputText.setText("");
-                flushDisplayById(Utils.getDistFriend());
+                flushDisplayByName(Utils.getDistFriendName());
 
 
             }
@@ -278,16 +276,17 @@ public class ClientView extends JFrame {
     }
 
     //刷新聊天记录 并刷新显示
-    public void SetLogById(String str, int id) {
-        Map<String, String> history = Utils.getHistory();
-        String oldHistory = history.get(id + "");
+    public void SetLogById(String str, String friendName) {
+        HashMap<String, String> history = Utils.getHistory();
+        String oldHistory = history.get(friendName);
         if (oldHistory == null) {
             oldHistory = "U are talking with : [" + Utils.getDistFriend() + "]\n";
         }
         String newHistory = oldHistory + "\n" +
                 new Date().toString() + "\n    " + str;
         history.remove(Utils.getDistFriend());
-        history.put(id + "", newHistory);
+        history.put(friendName, newHistory);
+        Utils.setHistory(history);
     }
 
     public static void main(String[] args) {
@@ -324,18 +323,18 @@ public class ClientView extends JFrame {
                         dealWithSystem(message);
                     } else {
                         //不是系统信息 有人给自己发信息 判断是否是当前聊天者
-                        if (Utils.getDistFriend() == message.getFromId()) {
+                        if (Utils.getDistFriendName().equals(message.getFromName()) ) {
                             //当前聊天对象 直接加入日志 并且刷新到面板
                             SetLogById("   [" + message.getFromName() + "]:"
-                                    + message.getMsg(), message.getFromId());
+                                    + message.getMsg(), message.getFromName());
 
-                            flushDisplayById(message.getFromId());
+                            flushDisplayByName(message.getFromName());
                         } else {
                             //不是当前聊天对象
                             SetLogById("   [" + message.getFromName() + "]:"
-                                    + message.getMsg(), message.getFromId());
+                                    + message.getMsg(), message.getFromName());
 
-                            consoleLabel.setText("\tU got a new msg from ["+message.getFromId()+"]!!");
+                            consoleLabel.setText("\tU got a new msg from ["+message.getFromName()+"]!!");
                         }
                     }
 
@@ -383,8 +382,9 @@ public class ClientView extends JFrame {
         displayText.setText(oldStr + "\n" + timeStr + "\n    " + str);
     }
 
-    public void flushDisplayById(int friendId) {
-        String context = Utils.getHistory().get(friendId+"");
+    public void flushDisplayByName(String friendName) {
+        HashMap<String, String> history = Utils.getHistory();
+        String context = history.get(friendName);
         displayText.setText(context);
     }
 
@@ -419,9 +419,9 @@ public class ClientView extends JFrame {
         HashMap<String, Integer> friendMap = friendMapObj.getFriendMap();
         String flashStr = "";
         for (String str:friendMap.keySet()){
-            Utils.friendMap.put(friendMap.get(str), str);
-            flashStr += "    $["+friendMap.get(str)+"]"+"\n";
-            flashStr += str;
+            //不断更新好友列表
+            Utils.friendMap.put(str, "");
+            flashStr += "*    ["+str+"]"+"\n";
         }
         flushFriend(flashStr);
     }
